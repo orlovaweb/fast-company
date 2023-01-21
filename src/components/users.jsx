@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Pagination from "./pagination";
-import User from "./user";
+// import User from "./user";
 import { paginate } from "../utils/paginate";
 import PropTypes from "prop-types";
 import GroupList from "./groupList";
 import api from "../api";
 import SearchStatus from "./searchStatus";
 import _ from "lodash";
+import UserTable from "./usersTable";
 
 const Users = ({ users, onDelete, onToggleBookMark }) => {
     const pageSize = 6;
@@ -62,29 +63,11 @@ const Users = ({ users, onDelete, onToggleBookMark }) => {
             <div className="m-2">
                 <SearchStatus length={count} />
                 {count > 0 && (
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Имя</th>
-                                <th scope="col">Качества</th>
-                                <th scope="col">Профессия</th>
-                                <th scope="col">Встретился, раз</th>
-                                <th scope="col">Оценка</th>
-                                <th scope="col">Избранное</th>
-                                <th />
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {userCrop.map((user) => (
-                                <User
-                                    key={user._id}
-                                    {...user}
-                                    onDelete={onDelete}
-                                    onToggleBookMark={onToggleBookMark}
-                                />
-                            ))}
-                        </tbody>
-                    </table>
+                    <UserTable
+                        users={userCrop}
+                        onDelete={onDelete}
+                        onToggleBookMark={onToggleBookMark}
+                    />
                 )}
                 <div className="d-flex justify-content-center">
                     <Pagination

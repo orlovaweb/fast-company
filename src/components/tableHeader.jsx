@@ -19,8 +19,8 @@ const TableHeader = ({ onSort, selectedSort, columns }) => {
                     className={
                         "ml-2 bi " +
                         (selectedSort.order === "asc"
-                            ? "bi-caret-up-fill"
-                            : "bi-caret-down-fill")
+                            ? "bi-caret-down-fill"
+                            : "bi-caret-up-fill")
                     }
                 ></i>
             );

@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
+
 import Pagination from "./pagination";
 import { paginate } from "../utils/paginate";
 import GroupList from "./groupList";
 import api from "../api";
 import SearchStatus from "./searchStatus";
 import _ from "lodash";
-import UserTable from "./usersTable";
+import UsersTable from "./usersTable";
+import SearchItems from "./searchItems";
 
 const Users = () => {
     const pageSize = 6;
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfessions] = useState();
     const [selectedProf, setSelectedProf] = useState();
+    const [searchItems, setSearchItems] = useState("");
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
 
     const [users, setUsers] = useState();
@@ -51,6 +54,10 @@ const Users = () => {
     const handleSort = (item) => {
         setSortBy(item);
     };
+    const handleChangeSearchItems = (e) => {
+        setSearchItems(e.target.value);
+        console.log(e.target.value);
+    };
     if (users) {
         const filteredUsers = selectedProf
             ? users.filter((user) => _.isEqual(user.profession, selectedProf))
@@ -87,8 +94,12 @@ const Users = () => {
                 </div>
                 <div className="m-2">
                     <SearchStatus length={count} />
+                    <SearchItems
+                        value={searchItems}
+                        onChange={handleChangeSearchItems}
+                    />
                     {count > 0 && (
-                        <UserTable
+                        <UsersTable
                             users={userCrop}
                             onDelete={handleDelete}
                             onToggleBookMark={handleToggleBookMark}

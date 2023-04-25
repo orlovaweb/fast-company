@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const SearchItems = ({ value, onChange }) => {
+const SearchItemsForm = ({ value, onChange }) => {
     return (
         <div>
             <form>
@@ -23,8 +23,8 @@ const SearchItems = ({ value, onChange }) => {
         </div>
     );
 };
-SearchItems.propTypes = {
+SearchItemsForm.propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func
 };
-export default SearchItems;
+export default SearchItemsForm;

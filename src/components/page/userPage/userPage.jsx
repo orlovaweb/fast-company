@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
-import api from "../api";
-import QualitiesList from "./qualitiesList";
+import api from "../../../api";
+import Qualities from "../../ui/qualities";
 
-const UserCard = ({ id }) => {
+const UserPage = ({ id }) => {
     const history = useHistory();
 
     const [user, setUser] = useState();
@@ -20,7 +20,7 @@ const UserCard = ({ id }) => {
             <>
                 <h1>Имя: {user.name}</h1>
                 <h2>Профессия: {user.profession.name}</h2>
-                <QualitiesList qualities={user.qualities} />
+                <Qualities qualities={user.qualities} />
                 <h2>Встретился: {user.completedMeetings} раз</h2>
                 <h2>Оценка: {user.rate}/5</h2>
                 <button
@@ -35,7 +35,7 @@ const UserCard = ({ id }) => {
     }
     return <h2>Loading...</h2>;
 };
-UserCard.propTypes = {
+UserPage.propTypes = {
     id: PropTypes.string.isRequired
 };
-export default UserCard;
+export default UserPage;

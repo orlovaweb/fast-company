@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 
-import Pagination from "./pagination";
-import { paginate } from "../utils/paginate";
-import GroupList from "./groupList";
-import api from "../api";
-import SearchStatus from "./searchStatus";
+import Pagination from "../../common/pagination";
+import { paginate } from "../../../utils/paginate";
+import GroupList from "../../common/groupList";
+import api from "../../../api";
+import SearchStatus from "../../ui/searchStatus";
 import _ from "lodash";
-import UsersTable from "./usersTable";
-import SearchItems from "./searchItems";
+import UsersTable from "../../ui/usersTable";
+import SearchItemsForm from "../../ui/searchItemsForm";
 
-const Users = () => {
+const UsersListPage = () => {
     const pageSize = 6;
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfessions] = useState();
@@ -43,32 +43,46 @@ const Users = () => {
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedProf, sortBy]);
+    }, [selectedProf, sortBy, searchItems]);
 
     const handlePageChange = (pageIndex) => {
         setCurrentPage(pageIndex);
     };
     const handleProfessionSelect = (item) => {
         setSelectedProf(item);
+        setSearchItems("");
     };
     const handleSort = (item) => {
         setSortBy(item);
     };
     const handleChangeSearchItems = (e) => {
         setSearchItems(e.target.value);
+        setSelectedProf();
         console.log(e.target.value);
     };
     if (users) {
-        const filteredUsers = selectedProf
-            ? users.filter((user) => _.isEqual(user.profession, selectedProf))
-            : users;
-        const count = filteredUsers.length;
-        const sortedUsers = _.orderBy(
-            filteredUsers,
-            [sortBy.path],
-            [sortBy.order]
-        );
-        const userCrop = paginate(sortedUsers, pageSize, currentPage);
+        let count = users.length;
+        let resultUsers = _.orderBy(users, [sortBy.path], [sortBy.order]);
+        if (searchItems) {
+            const reg = new RegExp(`${searchItems.toLowerCase()}`);
+            resultUsers = users.filter((user) =>
+                reg.test(user.name.toLowerCase())
+            );
+            count = resultUsers.length;
+        } else {
+            const filteredUsers = selectedProf
+                ? users.filter((user) =>
+                      _.isEqual(user.profession, selectedProf)
+                  )
+                : users;
+            count = filteredUsers.length;
+            resultUsers = _.orderBy(
+                filteredUsers,
+                [sortBy.path],
+                [sortBy.order]
+            );
+        }
+        const userCrop = paginate(resultUsers, pageSize, currentPage);
 
         const clearFilter = () => {
             setSelectedProf();
@@ -94,7 +108,7 @@ const Users = () => {
                 </div>
                 <div className="m-2">
                     <SearchStatus length={count} />
-                    <SearchItems
+                    <SearchItemsForm
                         value={searchItems}
                         onChange={handleChangeSearchItems}
                     />
@@ -122,4 +136,4 @@ const Users = () => {
     return "Loading...";
 };
 
-export default Users;
+export default UsersListPage;

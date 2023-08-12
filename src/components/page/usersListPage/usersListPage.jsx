@@ -8,6 +8,7 @@ import SearchStatus from "../../ui/searchStatus";
 import _ from "lodash";
 import UsersTable from "../../ui/usersTable";
 import SearchItemsForm from "../../ui/searchItemsForm";
+import { useUser } from "../../../hooks/useUsers";
 
 const UsersListPage = () => {
     const pageSize = 6;
@@ -17,14 +18,14 @@ const UsersListPage = () => {
     const [searchItems, setSearchItems] = useState("");
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
 
-    const [users, setUsers] = useState();
-    useEffect(() => {
-        api.users.fetchAll().then((data) => setUsers(data));
-    }, []);
+    const { users } = useUser();
+    console.log(users);
+
     const handleDelete = (userId) => {
-        setUsers((prevState) =>
-            prevState.filter((user) => user._id !== userId)
-        );
+        // setUsers((prevState) =>
+        //     prevState.filter((user) => user._id !== userId)
+        // );
+        console.log(userId);
     };
     const handleToggleBookMark = (id) => {
         const elementIndex = users.findIndex((c) => c._id === id);
@@ -32,7 +33,8 @@ const UsersListPage = () => {
         if (newUsers[elementIndex].bookmark) {
             newUsers[elementIndex].bookmark = false;
         } else newUsers[elementIndex].bookmark = true;
-        setUsers(newUsers);
+        // setUsers(newUsers);
+        console.log(newUsers);
     };
 
     useEffect(() => {

@@ -6,6 +6,7 @@ import Main from "./layouts/main";
 import Login from "./layouts/login";
 import { ToastContainer } from "react-toastify";
 import { ProfessionProvider } from "./hooks/useProfession";
+import { QualitiesProvider } from "./hooks/useQualities";
 
 const App = () => {
     return (
@@ -15,8 +16,13 @@ const App = () => {
             <Switch>
                 <Route path="/" exact component={Main} />
                 <ProfessionProvider>
-                    <Route path="/login/:type?" component={Login} />
-                    <Route path="/users/:userId?/:edit?" component={Users} />
+                    <QualitiesProvider>
+                        <Route path="/login/:type?" component={Login} />
+                        <Route
+                            path="/users/:userId?/:edit?"
+                            component={Users}
+                        />
+                    </QualitiesProvider>
                 </ProfessionProvider>
                 <Redirect to="/" />
             </Switch>

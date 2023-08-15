@@ -1,14 +1,25 @@
 import React from "react";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useMockData from "../utils/mockData";
 
 const Main = () => {
-    const notify = () => toast("Wow so easy!");
+    const { error, initialize, progress, status } = useMockData();
+    const handleClick = () => {
+        initialize();
+    };
     return (
-        <>
+        <div className="container mt-5">
             <h2>Main</h2>
-            <button onClick={notify}>Notify!</button>
-        </>
+            <h3>Инициализация данных в FireBase</h3>
+            <ul>
+                <li>Status:{status}</li>
+                <li>Progress:{progress}%</li>
+                {error && <li>Error:{error}</li>}
+            </ul>
+            <button className="btn btn-primary" onClick={handleClick}>
+                Инициализировать
+            </button>
+        </div>
     );
 };
 

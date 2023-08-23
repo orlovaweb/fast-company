@@ -1,24 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-import Pagination from "../../common/pagination";
+import _ from "lodash";
+import { useAuth } from "../../../hooks/useAuth";
+import { useProfessions } from "../../../hooks/useProfession";
+import { useUser } from "../../../hooks/useUsers";
 import { paginate } from "../../../utils/paginate";
 import GroupList from "../../common/groupList";
-import api from "../../../api";
-import SearchStatus from "../../ui/searchStatus";
-import _ from "lodash";
-import UsersTable from "../../ui/usersTable";
+import Pagination from "../../common/pagination";
 import SearchItemsForm from "../../ui/searchItemsForm";
-import { useUser } from "../../../hooks/useUsers";
+import SearchStatus from "../../ui/searchStatus";
+import UsersTable from "../../ui/usersTable";
 
 const UsersListPage = () => {
     const pageSize = 6;
     const [currentPage, setCurrentPage] = useState(1);
-    const [professions, setProfessions] = useState();
     const [selectedProf, setSelectedProf] = useState();
     const [searchItems, setSearchItems] = useState("");
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
 
     const { users } = useUser();
+    const { professions, isLoading: professionsLoading } = useProfessions();
+    const { currentUser } = useAuth();
     // console.log(users);
 
     const handleDelete = (userId) => {
@@ -36,12 +38,6 @@ const UsersListPage = () => {
         // setUsers(newUsers);
         console.log(newUsers);
     };
-
-    useEffect(() => {
-        api.professions.fetchAll().then((data) => {
-            setProfessions(data);
-        });
-    }, []);
 
     useEffect(() => {
         setCurrentPage(1);
@@ -62,37 +58,58 @@ const UsersListPage = () => {
         setSelectedProf();
         console.log(e.target.value);
     };
-    if (users) {
-        let count = users.length;
-        let resultUsers = _.orderBy(users, [sortBy.path], [sortBy.order]);
-        if (searchItems) {
-            const reg = new RegExp(`${searchItems.toLowerCase()}`);
-            resultUsers = users.filter((user) =>
-                reg.test(user.name.toLowerCase())
-            );
-            count = resultUsers.length;
-        } else {
-            const filteredUsers = selectedProf
-                ? users.filter((user) =>
-                      _.isEqual(user.profession, selectedProf)
+    function filterUsers(data) {
+        const filteredUsers = searchItems
+            ? data.filter((user) =>
+                  new RegExp(`${searchItems.toLowerCase()}`).test(
+                      user.name.toLowerCase()
                   )
-                : users;
-            count = filteredUsers.length;
-            resultUsers = _.orderBy(
-                filteredUsers,
-                [sortBy.path],
-                [sortBy.order]
-            );
-        }
-        const userCrop = paginate(resultUsers, pageSize, currentPage);
+              )
+            : selectedProf
+            ? data.filter((user) => _.isEqual(user.profession, selectedProf))
+            : data;
+        return filteredUsers.filter((u) => u._id !== currentUser._id);
+    }
+    if (users) {
+        // let count = users.length;
+        // let resultUsers = _.orderBy(users, [sortBy.path], [sortBy.order]);
 
+        // if (searchItems) {
+        //     const reg = new RegExp(`${searchItems.toLowerCase()}`);
+        //     resultUsers = users.filter((user) =>
+        //         reg.test(user.name.toLowerCase())
+        //     );
+        //     count = resultUsers.length;
+        // } else {
+        //     const filteredUsers = selectedProf
+        //         ? users.filter((user) =>
+        //               _.isEqual(user.profession, selectedProf)
+        //           )
+        //         : users;
+        //     count = filteredUsers.length;
+        //     resultUsers = _.orderBy(
+        //         filteredUsers,
+        //         [sortBy.path],
+        //         [sortBy.order]
+        //     );
+        // }
+
+        const filteredUsers = filterUsers(users);
+
+        const count = filteredUsers.length;
+        const sortedUsers = _.orderBy(
+            filteredUsers,
+            [sortBy.path],
+            [sortBy.order]
+        );
+        const userCrop = paginate(sortedUsers, pageSize, currentPage);
         const clearFilter = () => {
             setSelectedProf();
         };
         return (
             <div className="d-flex flex-row mb-3">
                 <div className="m-2 flex-shrink-0">
-                    {professions && (
+                    {professions && !professionsLoading && (
                         <>
                             <GroupList
                                 items={professions}

@@ -1,9 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { useHistory } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 const UserCard = ({ user }) => {
     const history = useHistory();
+    const { currentUser } = useAuth();
     const handleClick = () => {
         history.push(history.location.pathname + "/edit");
     };
@@ -11,17 +13,19 @@ const UserCard = ({ user }) => {
         <>
             <div className="card mb-3">
                 <div className="card-body">
-                    <button
-                        className="
+                    {currentUser._id === user._id && (
+                        <button
+                            className="
                                     position-absolute
                                     top-0
                                     end-0
                                     btn btn-light btn-sm
                                 "
-                        onClick={handleClick}
-                    >
-                        <i className="bi bi-gear"></i>
-                    </button>
+                            onClick={handleClick}
+                        >
+                            <i className="bi bi-gear"></i>
+                        </button>
+                    )}
                     <div
                         className="
                                     d-flex
@@ -32,11 +36,7 @@ const UserCard = ({ user }) => {
                                 "
                     >
                         <img
-                            src={`https://avatars.dicebear.com/api/avataaars/${(
-                                Math.random() + 1
-                            )
-                                .toString(36)
-                                .substring(7)}.svg`}
+                            src={user.image}
                             className="rounded-circle shadow-1-strong me-3"
                             alt="avatar"
                             width="150"

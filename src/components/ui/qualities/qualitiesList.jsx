@@ -5,21 +5,25 @@ import Quality from "./qualitie";
 
 const QualitiesList = ({ arrayQualitiesId }) => {
     const { isLoading, getQuality } = useQualities();
-    const arrayQualities = arrayQualitiesId.map((id) => {
-        const qual = getQuality(id);
-        return qual;
-    });
-    return (
-        <>
-            {arrayQualities.map((quality) =>
-                !isLoading ? (
-                    <Quality key={quality._id} {...quality} />
-                ) : (
-                    "loading..."
-                )
-            )}
-        </>
-    );
+    if (arrayQualitiesId) {
+        const arrayQualities = arrayQualitiesId.map((id) => {
+            const qual = getQuality(id);
+            return qual;
+        });
+
+        return (
+            <>
+                {arrayQualities.map((quality) =>
+                    !isLoading ? (
+                        <Quality key={quality._id} {...quality} />
+                    ) : (
+                        "loading..."
+                    )
+                )}
+            </>
+        );
+    }
+    return null;
 };
 
 QualitiesList.propTypes = {

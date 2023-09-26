@@ -1,12 +1,12 @@
 import axios from "axios";
 import PropTypes from "prop-types";
 import React, { useContext, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import localStorageService, {
     setTokens
 } from "../services/localStorage.service";
 import userService from "../services/user.service";
-import { useHistory } from "react-router-dom";
 
 export const httpAuth = axios.create({
     baseURL: "https://identitytoolkit.googleapis.com/v1/",
@@ -51,8 +51,10 @@ const AuthProvider = ({ children }) => {
     }, [error]);
 
     function errorCatcher(error) {
-        const { message } = error.response.data;
-        setError(message);
+        console.log("error is ", error);
+        // const { message } = error?.response?.data;
+        // setError(message);
+        setError(error);
     }
     function randomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
@@ -121,6 +123,14 @@ const AuthProvider = ({ children }) => {
             }
         }
     }
+    // async function uploadUser(data) {
+    //     try {
+    //         const { content } = await userService.upload(data);
+    //         setUser(content);
+    //     } catch (error) {
+    //         errorCatcher(error);
+    //     }
+    // }
     function logOut() {
         localStorageService.removeAuthData();
         setUser(null);

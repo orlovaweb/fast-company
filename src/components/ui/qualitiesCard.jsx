@@ -18,7 +18,7 @@ const QualitiesCard = ({ qualities }) => {
                     <span>Qualities</span>
                 </h5>
                 <p className="card-text">
-                    <Qualities qualities={qualities} />
+                    <Qualities arrayQualitiesId={qualities} />
                 </p>
             </div>
         </div>

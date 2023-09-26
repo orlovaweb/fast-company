@@ -1,17 +1,25 @@
+import "bootstrap/dist/css/bootstrap.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
+import { Provider } from "react-redux";
+import { Router } from "react-router-dom";
 import App from "./app";
+import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import "bootstrap/dist/css/bootstrap.css";
-import { BrowserRouter } from "react-router-dom";
+import { createStore } from "./store/createStore";
+import history from "./utils/history";
+// import history from "./utils/history";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
+const store = createStore();
 root.render(
     <React.StrictMode>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
+        <Provider store={store}>
+            <Router history={history}>
+                <App />
+            </Router>
+        </Provider>
     </React.StrictMode>
 );
 reportWebVitals();

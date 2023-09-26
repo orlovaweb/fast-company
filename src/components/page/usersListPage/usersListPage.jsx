@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 
 import _ from "lodash";
-import { useAuth } from "../../../hooks/useAuth";
-import { useProfessions } from "../../../hooks/useProfession";
-import { useUser } from "../../../hooks/useUsers";
+import { useSelector } from "react-redux";
+import {
+    getProfessions,
+    getProfessionsLoadingStatus
+} from "../../../store/professions";
+import { getCurrentUserId, getUsers } from "../../../store/users";
 import { paginate } from "../../../utils/paginate";
 import GroupList from "../../common/groupList";
 import Pagination from "../../common/pagination";
@@ -17,16 +20,12 @@ const UsersListPage = () => {
     const [selectedProf, setSelectedProf] = useState();
     const [searchItems, setSearchItems] = useState("");
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
-
-    const { users } = useUser();
-    const { professions, isLoading: professionsLoading } = useProfessions();
-    const { currentUser } = useAuth();
-    // console.log(users);
+    const users = useSelector(getUsers());
+    const professions = useSelector(getProfessions());
+    const professionsLoading = useSelector(getProfessionsLoadingStatus());
+    const currentUserId = useSelector(getCurrentUserId());
 
     const handleDelete = (userId) => {
-        // setUsers((prevState) =>
-        //     prevState.filter((user) => user._id !== userId)
-        // );
         console.log(userId);
     };
     const handleToggleBookMark = (id) => {
@@ -68,32 +67,9 @@ const UsersListPage = () => {
             : selectedProf
             ? data.filter((user) => _.isEqual(user.profession, selectedProf))
             : data;
-        return filteredUsers.filter((u) => u._id !== currentUser._id);
+        return filteredUsers.filter((u) => u._id !== currentUserId);
     }
     if (users) {
-        // let count = users.length;
-        // let resultUsers = _.orderBy(users, [sortBy.path], [sortBy.order]);
-
-        // if (searchItems) {
-        //     const reg = new RegExp(`${searchItems.toLowerCase()}`);
-        //     resultUsers = users.filter((user) =>
-        //         reg.test(user.name.toLowerCase())
-        //     );
-        //     count = resultUsers.length;
-        // } else {
-        //     const filteredUsers = selectedProf
-        //         ? users.filter((user) =>
-        //               _.isEqual(user.profession, selectedProf)
-        //           )
-        //         : users;
-        //     count = filteredUsers.length;
-        //     resultUsers = _.orderBy(
-        //         filteredUsers,
-        //         [sortBy.path],
-        //         [sortBy.order]
-        //     );
-        // }
-
         const filteredUsers = filterUsers(users);
 
         const count = filteredUsers.length;

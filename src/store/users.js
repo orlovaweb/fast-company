@@ -2,6 +2,7 @@ import { createAction, createSlice } from "@reduxjs/toolkit";
 import authService from "../services/auth.service";
 import localStorageService from "../services/localStorage.service";
 import userService from "../services/user.service";
+import { generateAuthError } from "../utils/generateAuthError";
 import getRandomInt from "../utils/getRandomInt";
 import history from "../utils/history";
 
@@ -58,14 +59,16 @@ const usersSlice = createSlice({
       state.isLoggedIn = false;
       state.auth = null;
       state.dataLoaded = false;
+    },
+    authRequested: (state) => {
+      state.error = null;
     }
   }
 });
 
 const { reducer: usersReducer, actions } = usersSlice;
-const { usersRequested, usersReceved, usersRequestField, authRequestSuccess, authRequestFailed, userCreated, userLoggedOut, userUploaded } = actions;
+const { usersRequested, usersReceved, usersRequestField, authRequestSuccess, authRequestFailed, userCreated, userLoggedOut, userUploaded, authRequested } = actions;
 
-const authRequested = createAction("users/authRequested");
 const userCreateRequested = createAction("users/userCreateRequested");
 const userCreateFailed = createAction("users/userCreateFailed");
 const userUploadRequested = createAction("users/userUploadRequested");
@@ -80,7 +83,14 @@ export const login = ({ payload, redirect }) => async (dispatch) => {
     localStorageService.setTokens(data);
     history.push(redirect);
   } catch (error) {
-    dispatch(authRequestFailed(error.message));
+    const { code, message } = error.response.data.error;
+    console.log(code, message);
+    if (code === 400) {
+      const errorMessage = generateAuthError(message);
+      dispatch(authRequestFailed(errorMessage));
+    } else {
+      dispatch(authRequestFailed(error.message));
+    }
   }
 };
 
@@ -163,4 +173,5 @@ export const getUserById = (userId) => state => {
 export const getIsLoggedIn = () => state => state.users.isLoggedIn;
 export const getDataStatus = () => state => state.users.dataLoaded;
 export const getCurrentUserId = () => state => state.users.auth.userId;
+export const getAuthError = () => state => state.users.error;
 export default usersReducer;

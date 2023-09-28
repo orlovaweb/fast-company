@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { useSelector } from "react-redux";
-import { CommentsProvider } from "../../../hooks/useComments";
 import { getUserById } from "../../../store/users";
 import Comments from "../../ui/comments";
 import MeetingsCard from "../../ui/meetingsCard";
@@ -23,9 +22,7 @@ const UserPage = ({ userId }) => {
                         </div>
 
                         <div className="col-md-8">
-                            <CommentsProvider>
-                                <Comments />
-                            </CommentsProvider>
+                            <Comments />
                         </div>
                     </div>
                 </div>

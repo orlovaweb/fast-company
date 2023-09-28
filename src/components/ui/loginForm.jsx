@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { getAuthError, login } from "../../store/users";
 import { validator } from "../../utils/validator";
 import CheckBoxField from "../common/form/checkBoxField";
 import TextField from "../common/form/textField";
-import { useDispatch } from "react-redux";
-import { login } from "../../store/users";
 const initialState = {
     email: "",
     password: "",
@@ -12,13 +12,12 @@ const initialState = {
 };
 const LoginForm = () => {
     const [data, setData] = useState(initialState);
+    const loginError = useSelector(getAuthError());
     const [errors, setErrors] = useState({});
-    const [enterError, setEnterError] = useState(null);
     const dispatch = useDispatch();
     const history = useHistory();
     const handleChange = (target) => {
         setData((prevState) => ({ ...prevState, [target.name]: target.value }));
-        setEnterError(null);
     };
     const validatorConfig = {
         email: {
@@ -74,9 +73,10 @@ const LoginForm = () => {
             >
                 Оставаться в системе
             </CheckBoxField>
-            {enterError && <p className="text-danger">{enterError}</p>}
+            {loginError && <p className="text-danger">{loginError}</p>}
+
             <button
-                disabled={!isValid || enterError}
+                disabled={!isValid}
                 className="btn btn-primary w-100 mx-auto"
             >
                 Отправить

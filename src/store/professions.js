@@ -3,7 +3,7 @@ import professionService from "../services/profession.service";
 import isOutdated from "../utils/isOutdated";
 
 const professionsSlice = createSlice({
-  name: "professions",
+  name: "comments",
   initialState: {
     entities: null,
     isLoading: true,

@@ -1,18 +1,31 @@
 import _ from "lodash";
 // import PropTypes from "prop-types";
-import React from "react";
-import { useComments } from "../../hooks/useComments";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import {
+    createComment,
+    getComments,
+    getCommentsLoadingStatus,
+    loadCommentsList,
+    removeComment
+} from "../../store/comments";
 import CommentForm from "./commentForm";
 import CommentsList from "./commentsList";
 
 const Comments = () => {
-    const { createComment, comments, isLoading, removeComment } = useComments();
-
+    const dispatch = useDispatch();
+    const { userId } = useParams();
+    useEffect(() => {
+        dispatch(loadCommentsList(userId));
+    }, [userId]);
+    const comments = useSelector(getComments());
+    const isLoading = useSelector(getCommentsLoadingStatus());
     const handleDelete = (commentId) => {
-        removeComment(commentId);
+        dispatch(removeComment(commentId));
     };
     const handleSubmit = (data) => {
-        createComment(data);
+        dispatch(createComment({ ...data, pageId: userId }));
     };
 
     const sortedComments = _.orderBy(comments, ["created_at"], ["desc"]);
